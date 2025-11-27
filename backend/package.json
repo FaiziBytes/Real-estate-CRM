@@ -8,5 +8,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.0",
+    "nodemon": "^3.1.11"
+  }
 }
