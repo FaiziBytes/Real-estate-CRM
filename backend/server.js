@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import connectDB from "./config/connection.js";
 import Router from "./routes/user.routes.js";
@@ -9,9 +8,6 @@ await connectDB();
 const app = express();
 // middlewares
 app.use(express.json());
-app.use(express.urlencoded({extended:true}))
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
 app.use("/api/v1",Router);
 // app is running
 app.get("/",(req,res)=>{
