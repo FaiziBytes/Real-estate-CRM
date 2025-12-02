@@ -16,7 +16,10 @@ const userSchema = new mongoose.Schema({
       },
       role:{
             type:String,
-            default:["user"]
+            default:"user"
       }
 
 },{timestamps:true})
+
+const UserModel = mongoose.model("User",userSchema);
+export default UserModel;
