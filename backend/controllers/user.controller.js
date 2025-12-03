@@ -7,6 +7,7 @@ import { registerSchema,VerifyUser } from "../validations/registerSchema.js";
 import sendEmail from "../utils/sendEmail.js";
 import { getOtpHtml, getVerifyEmailHtml } from "../utils/html.js";
 import tryCatch from "../middlewares/trycatch.js";
+import { generateToken } from "../utils/generate-token.js";
 
 export const registerUser = tryCatch(async (req, res) => {
     const sanitizedBody = sanitize(req.body);
@@ -117,7 +118,7 @@ export const LoginUser = tryCatch(async (req, res) => {
         })
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpKey = `opt:${email}`;
+    const otpKey = `otp:${email}`;
     await redisClient.set(otpKey, JSON.stringify(otp),{
         EX:300
     });
@@ -134,25 +135,30 @@ export const LoginUser = tryCatch(async (req, res) => {
 
 export const verifyOtp = tryCatch(async (req,res)=>{
     const {email,otp} = req.body;
-    if(!email || otp){
+    if(!email || !otp){
         return res.status(400).json({
             message:"Please provide all the details"
         })
     }
     const otpKey = `otp:${email}`;
     const storedOtpString = await redisClient.get(otpKey);
+    console.log(storedOtpString, otp);
     if(!storedOtpString){
         return res.status(400).json({
-            message:"Otp expired"
+            message:"Otp expired or invalid"
         })
     }
     const storedOtp = JSON.parse(storedOtpString);
-    if(storedOtp === !otp){
+    if(storedOtp != otp){
         return res.status({
             message:"Invalid Otp"
         })
     }
     await redisClient.del(otpKey);
     let user = await UserModel.findOne({email});
-    
+    const tokenData = await generateToken(user._id, res)
+
+    res.status(200).json({
+        message:`welcome ${user.name}`
+    })
 })
